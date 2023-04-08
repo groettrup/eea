@@ -1,0 +1,48 @@
+html, body {
+	font: 14px/1.21 'Helvetica Neue', arial, sans-serif;
+	font-weight: 400;
+    margin: 0;
+    padding: 0.1em;
+}
+
+h1 {
+	text-align: center;
+}
+
+.base-grid {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.1em;
+}
+
+.headline {
+    background: green;
+    grid-row: 1;
+    grid-column: 1 / span 2;
+}
+
+.inputs {
+    display: flex;
+    flex-flow: column nowrap;
+    border: 2px solid yellow;
+    background: yellow;
+    grid-row: 2;
+    grid-column: 1;;
+}
+
+.table {
+    background: red;
+    grid-row: 3;
+    grid-column: 1;
+}
+
+.viz {
+    background: blue;
+    grid-row: 2 / span 3;
+    grid-column: 2;
+}
+
+.input {
+    background: lightpink;
+}
