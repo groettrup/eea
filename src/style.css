@@ -46,3 +46,8 @@ h1 {
 .input {
     background: lightpink;
 }
+ table, th, td { border: 1px solid; }
+ table {
+     margin: 0 auto;
+     border-spacing: 0;
+ }
