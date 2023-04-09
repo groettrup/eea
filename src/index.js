@@ -3,11 +3,12 @@ import {signal, computed} from '@preact/signals';
 
 const x = signal(5)
 const y = signal(3)
+const curr = signal(null)
 
 function eea_list(x, y){
     let a = Math.max(x,y)
     let b = Math.min(x,y)
-    let r = a
+    let r = b
     let q = 0
     let s = 1
     let s_old = 0
@@ -15,15 +16,18 @@ function eea_list(x, y){
     let t_old = 1
     let tmp = 0
     let res = [
-        [a,b,0,b,s_old,t_old],
+        [a,b,0,a,s_old,t_old],
         [a,b,q,r,s,t]
     ]
-    // b = 0*a+1*b
     while(b!=0){
         r = a % b
         q = (a-r) / b
+        tmp = s
         s = s_old-q*s
+        s_old = tmp
+        tmp = t
         t = t_old-q*t
+        t_old = tmp
         res.push([a,b,q,r,s,t])
         a = b
         b = r
@@ -33,6 +37,11 @@ function eea_list(x, y){
 const product = computed(() => x.value * y.value)
 const table_entries = computed(() => {
     return eea_list(x,y)
+})
+const equation = computed(() => {
+    if(curr.value==null) return("") 
+    let [a,b,q,r,s,t] = table_entries.value[curr]
+    return(`${x.value}·${t}+${y.value}·${s}=${r}`)
 })
 
 function NumberIn(props) {
@@ -48,17 +57,18 @@ function NumberIn(props) {
 function Table(props) {
     return(
         <>
-        <table>
+        <table onMouseleave={() => curr.value=null}>
             <tr>
                 <th>i</th>
                 <th>a</th>
                 <th>b</th>
+                <th>q</th>
+                <th>r</th>
                 <th>s</th>
                 <th>t</th>
-                <th>r</th>
             </tr>
         {table_entries.value.map((xs,i) =>
-            <tr>
+            <tr onMouseenter={() => curr.value=i}>
                 <td>{i}</td>
                 {xs.map((v) => <td>{v}</td>)}
             </tr>
@@ -72,7 +82,7 @@ export default function App() {
     return (
         <div class="base-grid">
         <div class="headline">
-        <h1>Hello, World!</h1>
+        <h1>Extended Euklidean Algorithm</h1>
         <p>This is the headline</p>
         </div>
         <div class="inputs">
@@ -85,7 +95,7 @@ export default function App() {
         <p>The product is {product.value}</p>
         </div>
         <div class="viz">
-        <p>Vizualizations go in here</p>
+        <h2>{equation.value}</h2>
         </div>
         </div>
     );
