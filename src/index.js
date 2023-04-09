@@ -1,9 +1,13 @@
 import './style';
-import {signal, computed} from '@preact/signals';
+import {signal, computed, effect} from '@preact/signals';
+import katex from 'katex';
+import { h } from 'preact';
 
 const x = signal(5)
 const y = signal(3)
 const curr = signal(null)
+
+
 
 function eea_list(x, y){
     let a = Math.max(x,y)
@@ -34,14 +38,19 @@ function eea_list(x, y){
     }
     return res
 }
-const product = computed(() => x.value * y.value)
 const table_entries = computed(() => {
     return eea_list(x,y)
 })
+
+const MathEnv = () => <div class="katex-env" ref={(me) => {
+    if(me==null) return;
+    effect(() => katex.render(equation.value,me,{output: "mathml"}))
+}} />
+const parenthesize = (val) => val < 0 ? "(" + val + ")" : val
 const equation = computed(() => {
     if(curr.value==null) return("") 
     let [a,b,q,r,s,t] = table_entries.value[curr]
-    return(`${x.value}·${t}+${y.value}·${s}=${r}`)
+    return(`${x.value} \\cdot ${parenthesize(t)}+${y.value} \\cdot ${parenthesize(s)}=${r}`)
 })
 
 function NumberIn(props) {
@@ -50,7 +59,10 @@ function NumberIn(props) {
 
     return (
         <div class="input">
+        <label>
+        {`${props.name}: `}
         <input value={props.sig.value} onInput={onInput} />
+        </label>
         </div>
     );
 }
@@ -58,19 +70,19 @@ function Table(props) {
     return(
         <>
         <table onMouseleave={() => curr.value=null}>
-            <tr>
-                <th>i</th>
-                <th>a</th>
-                <th>b</th>
-                <th>q</th>
-                <th>r</th>
-                <th>s</th>
-                <th>t</th>
-            </tr>
+        <tr>
+        <th>i</th>
+        <th>a</th>
+        <th>b</th>
+        <th>q</th>
+        <th>r</th>
+        <th>s</th>
+        <th>t</th>
+        </tr>
         {table_entries.value.map((xs,i) =>
             <tr onMouseenter={() => curr.value=i}>
-                <td>{i}</td>
-                {xs.map((v) => <td>{v}</td>)}
+            <td>{i}</td>
+            {xs.map((v) => <td>{v}</td>)}
             </tr>
         )}
         </table>
@@ -87,15 +99,17 @@ export default function App() {
         </div>
         <div class="inputs">
         <p>Inputs go in here</p>
-        <NumberIn sig={x}/>
-        <NumberIn sig={y}/>
+        <NumberIn sig={x} name="x"/>
+        <NumberIn sig={y} name="y"/>
         </div>
         <div class="table">
         <Table />
-        <p>The product is {product.value}</p>
         </div>
         <div class="viz">
-        <h2>{equation.value}</h2>
+        <link
+          rel="stylesheet"
+          href="https://fred-wang.github.io/MathFonts/STIX/mathfonts.css" />
+        <p><MathEnv /></p>
         </div>
         </div>
     );
