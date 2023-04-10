@@ -1,7 +1,7 @@
 {
   "name": "eea",
   "short_name": "eea",
-  "start_url": "/",
+  "start_url": "/eea",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fff",

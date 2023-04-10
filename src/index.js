@@ -1,7 +1,6 @@
 import './style';
 import {signal, computed, effect} from '@preact/signals';
 import katex from 'katex';
-import { h } from 'preact';
 
 const x = signal(5)
 const y = signal(3)
